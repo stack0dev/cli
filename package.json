@@ -1,0 +1,39 @@
+{
+  "name": "@stack0/cli",
+  "version": "0.1.0",
+  "description": "Stack0 CLI — manage your Stack0 resources from the terminal",
+  "type": "module",
+  "bin": {
+    "stack0": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.0.0",
+    "@stack0/sdk": "workspace:*",
+    "chalk": "^5.3.0",
+    "cli-table3": "^0.6.5",
+    "commander": "^13.0.0",
+    "conf": "^13.0.0",
+    "open": "^10.1.0",
+    "ora": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.5.4"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stack0dev/cli.git"
+  }
+}
