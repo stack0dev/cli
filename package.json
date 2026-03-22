@@ -2,19 +2,43 @@
   "name": "@stack0/cli",
   "version": "0.1.0",
   "description": "Stack0 CLI — manage your Stack0 resources from the terminal",
-  "type": "module",
   "bin": {
     "stack0": "./dist/index.js"
   },
   "main": "./dist/index.js",
-  "files": [
-    "dist",
-    "README.md"
+  "files": ["dist", "README.md"],
+  "keywords": [
+    "stack0",
+    "email",
+    "mail",
+    "transactional-email",
+    "cdn",
+    "assets",
+    "file-upload",
+    "screenshots",
+    "webpage-capture",
+    "ai-extraction",
+    "web-scraping",
+    "agent-memory",
+    "api",
+    "sdk"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stack0dev/cli.git",
+    "directory": "packages/cli"
+  },
+  "license": "MIT",
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run build",
+    "version:patch": "npm version patch",
+    "version:minor": "npm version minor",
+    "version:major": "npm version major",
+    "release": "bun run build && npm publish",
+    "release:next": "bun run build && npm publish --tag next"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.0.0",
@@ -30,10 +54,5 @@
     "@types/node": "^22.5.0",
     "tsup": "^8.0.2",
     "typescript": "^5.5.4"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/stack0dev/cli.git"
   }
 }
