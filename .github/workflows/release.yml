@@ -1,0 +1,56 @@
+name: Release
+
+# Publishes @stack0/cli to npm when a version tag (e.g. `v0.1.2`) is pushed,
+# or on demand from the Actions tab.
+#
+# Normal flow:
+#   bun run version:patch          # bumps package.json + creates the v* tag
+#   git push --follow-tags origin main
+#
+# Requires an `NPM_TOKEN` repository secret (a granular npm automation token
+# with publish access to the @stack0 scope).
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # required for npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+
+      # In the monorepo, @stack0/sdk is a `workspace:*` dependency. That
+      # protocol can't resolve in this standalone repo, so pin it to the
+      # latest published SDK before installing and publishing.
+      - name: Pin @stack0/sdk to its published version
+        run: |
+          SDK_VERSION="$(npm view @stack0/sdk version)"
+          echo "Pinning @stack0/sdk to ^${SDK_VERSION}"
+          npm pkg set "dependencies.@stack0/sdk=^${SDK_VERSION}"
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build
+        run: bun run build
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
