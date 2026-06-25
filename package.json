@@ -37,8 +37,8 @@
     "version:patch": "npm version patch",
     "version:minor": "npm version minor",
     "version:major": "npm version major",
-    "release": "bun run build && npm publish",
-    "release:next": "bun run build && npm publish --tag next"
+    "release": "bun run build && bun publish",
+    "release:next": "bun run build && bun publish --tag next"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.0.0",
