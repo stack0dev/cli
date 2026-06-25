@@ -1,12 +1,15 @@
 {
   "name": "@stack0/cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Stack0 CLI — manage your Stack0 resources from the terminal",
   "bin": {
     "stack0": "./dist/index.js"
   },
   "main": "./dist/index.js",
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "keywords": [
     "stack0",
     "email",
