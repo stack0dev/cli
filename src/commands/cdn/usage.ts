@@ -11,6 +11,12 @@ const BREAKDOWN_COLUMNS: Column[] = [
   { key: "percentage", header: "%", format: (v) => `${v}%` },
 ];
 
+const STORAGE_TYPE_COLUMNS: Column[] = [
+  { key: "type", header: "Type" },
+  { key: "bytesFormatted", header: "Size" },
+  { key: "objectCount", header: "Objects" },
+];
+
 export function registerUsageCommand(cdn: Command): void {
   cdn
     .command("usage")
@@ -23,6 +29,57 @@ export function registerUsageCommand(cdn: Command): void {
 
         const usage = await client.cdn.getUsage({ projectSlug });
         printOutput(usage, opts);
+      }),
+    );
+
+  cdn
+    .command("storage")
+    .description("Show total stored bytes, including derived assets")
+    .option("--folder <path>", "Scope to a folder and everything nested under it")
+    .option("--environment <env>", "Filter by 'sandbox' or 'production'")
+    .action(
+      withErrorHandler(async (_opts: unknown, cmd: Command) => {
+        const opts = getGlobalOptions(cmd);
+        const client = createClient(opts);
+        const projectSlug = resolveProject(opts) || undefined;
+        const localOpts = cmd.opts();
+
+        const usage = await client.cdn.getStorageUsage({
+          projectSlug,
+          folder: localOpts.folder,
+          environment: localOpts.environment,
+        });
+
+        if (opts.json) {
+          printOutput(usage, opts);
+          return;
+        }
+
+        const scope = usage.folder ? ` under ${usage.folder}` : "";
+        console.log(`Total: ${usage.totalFormatted} across ${usage.objectCount} objects${scope}`);
+        console.log(
+          `  uploads: ${usage.breakdown.originals.bytesFormatted} (${usage.breakdown.originals.objectCount} objects)`,
+        );
+        console.log(
+          `  derived: ${usage.breakdown.derived.bytesFormatted} (${usage.breakdown.derived.objectCount} objects)`,
+        );
+
+        const rows = Object.entries(usage.byType).map(([type, bucket]) => ({
+          type,
+          ...(bucket as Record<string, unknown>),
+        }));
+        if (rows.length > 0) {
+          console.log("");
+          printOutput(rows, opts, STORAGE_TYPE_COLUMNS);
+        }
+
+        // A floor is not a total. Say so rather than let the number read as complete.
+        if (usage.unmeasuredAssets > 0) {
+          console.log("");
+          console.log(
+            `Warning: ${usage.unmeasuredAssets} assets have unmeasured derived files, so this total is a floor.`,
+          );
+        }
       }),
     );
 

@@ -2,6 +2,7 @@
   "name": "@stack0/cli",
   "version": "0.1.1",
   "description": "Stack0 CLI — manage your Stack0 resources from the terminal",
+  "type": "module",
   "bin": {
     "stack0": "./dist/index.js"
   },
