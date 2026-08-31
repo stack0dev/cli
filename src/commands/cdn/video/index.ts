@@ -160,6 +160,11 @@ export function registerVideoCommand(cdn: Command): void {
     .requiredOption("--assets <json>", "JSON array of merge inputs")
     .option("--format <fmt>", "Output format (mp4 or webm)", "mp4")
     .option("--quality <q>", "Output quality (360p-2160p)", "720p")
+    .option(
+      "--aspect-ratio <ratio>",
+      "Output canvas: auto (match first input's orientation), 16:9, 9:16, or 1:1",
+      "auto",
+    )
     .option("--filename <name>", "Output filename")
     .option("--audio-asset <id>", "Background audio asset ID")
     .option("--webhook-url <url>", "Webhook URL for completion notification")
@@ -186,6 +191,7 @@ export function registerVideoCommand(cdn: Command): void {
             output: {
               format: localOpts.format,
               quality: localOpts.quality,
+              aspectRatio: localOpts.aspectRatio,
               filename: localOpts.filename,
             },
             webhookUrl: localOpts.webhookUrl,
